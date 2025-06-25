@@ -7,7 +7,7 @@ const mqtt = require('mqtt');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-const mqttClient = mqtt.connect("mqtt.eclipseprojects.io");
+const mqttClient = mqtt.connect("mqtt://mqtt.eclipseprojects.io");
 
 app.use(bodyParser.json());
 app.use(require('cors')());
