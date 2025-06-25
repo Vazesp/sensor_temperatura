@@ -1,15 +1,20 @@
+require('dotenv').config();
+
 const express = require('express');
 const mongoose = require ('mongoose');
 const bodyParser = require ('body-parser');
 const app = express();
+const PORT = process.env.PORT || 3000;
 
 app.use(bodyParser.json());
 app.use(require('cors')());
 
-mongoose.connect('mongodb://localhost:27017/pruebas', {
-    useNewUrlParser : true,
-    useUnifiedTopology : true,
-});
+mongoose.connect(process.env.MONGO_URL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+})
+.then(() => console.log("Conectado a MongoDB Atlas"))
+.catch(err => console.error("Error en MongoDB:", err));
 
 const SensorSchema = new mongoose.Schema({
     temperatura : Number,
@@ -30,4 +35,4 @@ app.post('/api/datos', async (req, res) => {
     }
 });
 
-app.listen(3000, () => console.log('Servidor en http://localhost:3000'));
+app.listen(PORT, () => console.log('Servidor en http://localhost:3000'));
