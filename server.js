@@ -38,7 +38,7 @@ mqttClient.on("message", async(topic, message)=>{
             }
         ]);
         const valor = promedio[0]?.promedio?.toFixed(2) || "No hay datos";
-        mqttClient.publish("temperatura", `Promedio temperatura: ${valor} %`);
+        mqttClient.publish("respuesta", `Promedio temperatura: ${valor} %`);
     }
 
     if(msg.includes("promedio") && msg.includes("humedad")){
@@ -54,7 +54,7 @@ mqttClient.on("message", async(topic, message)=>{
             }
         ]);
         const valor = promedio[0]?.promedio?.toFixed(2) || "No hay datos";
-        mqttClient.publish("temperatura", `Promedio humedad: ${valor} %`);
+        mqttClient.publish("respuesta", `Promedio humedad: ${valor} %`);
     }
 
     if(msg.includes("promedio")){
@@ -72,7 +72,7 @@ mqttClient.on("message", async(topic, message)=>{
         ]);
         const temp = promedio[0]?.promedio_temperatura?.toFixed(2) || "No hay datos";
         const hum = promedio[0]?.promedio_humedad?.toFixed(2) || "No hay datos";
-        mqttClient.publish("temperatura", `Promedio Temperatura: ${temp} ºC \n Promedio Humedad : ${hum} %`);
+        mqttClient.publish("respuesta", `Promedio Temperatura: ${temp} ºC \n Promedio Humedad : ${hum} %`);
     }
 })
 
