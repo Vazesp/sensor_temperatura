@@ -57,7 +57,7 @@ mqttClient.on("message", async(topic, message)=>{
         mqttClient.publish("respuesta", `Promedio humedad: ${valor} %`);
     }
 
-    if(msg.includes("promedio")){
+    if(msg.includes("promedio") && !msg.includes("temperatura") && !msg.includes("humedad")){
         const promedio = await Sensor.aggregate([
             {
                 $match : {humedad :{$ne : null}, temperatura : {$ne : null}}
