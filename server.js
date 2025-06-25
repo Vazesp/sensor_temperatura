@@ -26,7 +26,7 @@ mqttClient.on("message", async(topic, message)=>{
     console.log("Mensaje recibido:", msg);
 
     if(msg.includes("promedio") && msg.includes("temperatura")){
-        const promedio = await pruebas.aggregate([
+        const promedio = await Sensor.aggregate([
             {
                 $match : {temperatura :{$ne : null}}
             },
@@ -38,11 +38,11 @@ mqttClient.on("message", async(topic, message)=>{
             }
         ]);
         const valor = promedio[0]?.promedio?.toFixed(2) || "No hay datos";
-        mqttClient.publish("temperatura", 'Promedio temperatura: ${valor} %');
+        mqttClient.publish("temperatura", `Promedio temperatura: ${valor} %`);
     }
 
     if(msg.includes("promedio") && msg.includes("humedad")){
-        const promedio = await pruebas.aggregate([
+        const promedio = await Sensor.aggregate([
             {
                 $match : {humedad :{$ne : null}}
             },
@@ -54,11 +54,11 @@ mqttClient.on("message", async(topic, message)=>{
             }
         ]);
         const valor = promedio[0]?.promedio?.toFixed(2) || "No hay datos";
-        mqttClient.publish("temperatura", 'Promedio humedad: ${valor} %');
+        mqttClient.publish("temperatura", `Promedio humedad: ${valor} %`);
     }
 
     if(msg.includes("promedio")){
-        const promedio = await pruebas.aggregate([
+        const promedio = await Sensor.aggregate([
             {
                 $match : {humedad :{$ne : null}, temperatura : {$ne : null}}
             },
@@ -72,7 +72,7 @@ mqttClient.on("message", async(topic, message)=>{
         ]);
         const temp = promedio[0]?.promedio_temperatura?.toFixed(2) || "No hay datos";
         const hum = promedio[0]?.promedio_humedad?.toFixed(2) || "No hay datos";
-        mqttClient.publish("temperatura", 'Promedio Temperatura: ${temp} ºC \n Promedio Humedad : ${hum} %');
+        mqttClient.publish("temperatura", `Promedio Temperatura: ${temp} ºC \n Promedio Humedad : ${hum} %`);
     }
 })
 
