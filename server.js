@@ -76,9 +76,11 @@ mqttClient.on("message", async(topic, message)=>{
     }
     if(msg.includes("actual") && msg.includes("temperatura")){
         const datos = await Sensor.find({}, {_id: 0, temperatura : 1}).sort({fecha : -1}).limit(1);
+
+        const temp = datos[0]?.temperatura || "No hay datos";
+        mqttClient.publish("respuesta", `Temperatura Actual: ${temp} ºC`)
     }
-    const temp = datos[0]?.temperatura || "No hay datos";
-    mqttClient.publish("respuesta", `Temperatura Actual: ${temp} ºC`)
+    
 })
 
 //conectarnos al server de mongo
