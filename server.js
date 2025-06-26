@@ -83,11 +83,9 @@ mqttClient.on("message", async(topic, message)=>{
     if(msg.includes("actual") && msg.includes("humedad")){
         const datos = await Sensor.find({}, {id_ : 0, humedad : 1}).sort({fecha : -1}).limit(1);
         
-        const hum = datos[0]?.humedad.toFixed(1) ||"No hay datos";
+        const hum = datos[0]?.humedad?.toFixed(1) ||"No hay datos";
         mqttClient.publish("respuesta", `Humedad Actual: ${hum} %`);
-    }
-
-    
+    } 
 })
 
 //conectarnos al server de mongo
