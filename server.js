@@ -75,7 +75,7 @@ mqttClient.on("message", async(topic, message)=>{
         mqttClient.publish("respuesta", `Promedio Temperatura: ${temp} ºC \n Promedio Humedad : ${hum} %`);
     }
     if(msg.includes("actual") && msg.includes("temperatura")){
-        const datos = await Sensor.find({}, {_id: 0, temperatura : 1}).sort({fecha : -1}).limit(1);
+        const datos = await Sensor.find({}, {_id: 0, temperatura : 1}).sort({fecha : 1}).limit(1);
 
         const temp = datos[0]?.temperatura || "No hay datos";
         mqttClient.publish("respuesta", `Temperatura Actual: ${temp} ºC`)
