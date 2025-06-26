@@ -14,7 +14,7 @@ app.use(require('cors')());
 
 mqttClient.on("connect", () => {
     console.log("Conectado al MQTT");
-    mqttClient.subscribe("consulta", (err) => {
+    mqttClient.subscribe("temperatura", (err) => {
         if(!err){
             console.log("Suscrito al topic");
         }
@@ -74,6 +74,11 @@ mqttClient.on("message", async(topic, message)=>{
         const hum = promedio[0]?.promedio_humedad?.toFixed(2) || "No hay datos";
         mqttClient.publish("respuesta", `Promedio Temperatura: ${temp} ºC \n Promedio Humedad : ${hum} %`);
     }
+    if(msg.includes("actual") && msg.includes("temperatura")){
+        const actual = await Sensor.find({}, {_id: 0, temperatura : 1}).sort(-1).limit(1);
+    }
+    const temp = actual[0]?.temperatura || "No hay datos";
+    mqttClient.publish("respuesta", `Temperatura Actual: ${temp} ºC`)
 })
 
 //conectarnos al server de mongo
