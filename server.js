@@ -24,7 +24,7 @@ mqttClient.on("connect", () => {
 mqttClient.on("message", async(topic, message)=>{
     const msg = message.toString().toLowerCase();
     console.log("Mensaje recibido:", msg);
-
+    //Si en el mensaje mqtt aparece promedio y temperatura nos da el promedio de temperatura
     if(msg.includes("promedio") && msg.includes("temperatura")){
         const promedio = await Sensor.aggregate([
             {
@@ -37,10 +37,12 @@ mqttClient.on("message", async(topic, message)=>{
                 }
             }
         ]);
+        //Guardamos el valor de promedio, que tenga un valor promedio y redondeado a dos decimales 
         const valor = promedio[0]?.promedio?.toFixed(2) || "No hay datos";
+        //Publicamos en el cliente mqtt con topic respuesta 
         mqttClient.publish("respuesta", `Promedio temperatura: ${valor} %`);
     }
-
+    //Si en el mensaje mqtt aparece promedio y humedad nos da el promedio de humedad
     if(msg.includes("promedio") && msg.includes("humedad")){
         const promedio = await Sensor.aggregate([
             {
@@ -53,10 +55,11 @@ mqttClient.on("message", async(topic, message)=>{
                 }
             }
         ]);
+        //Guardamos el valor de promedio, que tenga un valor promedio y redondeado a dos decimales 
         const valor = promedio[0]?.promedio?.toFixed(2) || "No hay datos";
         mqttClient.publish("respuesta", `Promedio humedad: ${valor} %`);
     }
-
+    //Cuando solo aparece promedio en el mensaje mqtt nso da los dos promedios
     if(msg.includes("promedio") && !msg.includes("temperatura") && !msg.includes("humedad")){
         const promedio = await Sensor.aggregate([
             {
@@ -74,13 +77,15 @@ mqttClient.on("message", async(topic, message)=>{
         const hum = promedio[0]?.promedio_humedad?.toFixed(2) || "No hay datos";
         mqttClient.publish("respuesta", `Promedio Temperatura: ${temp} ºC \n Promedio Humedad : ${hum} %`);
     }
-    if(msg.includes("actual") && msg.includes("temperatura")){
+    //Cuando el mensaje en el mqtt incluya actual/ahora y temperatura nos da la última temperatura
+    if((msg.includes("actual")|| msg.includes("ahora")) && msg.includes("temperatura")){
         const datos = await Sensor.find({}, {_id: 0, temperatura : 1}).sort({hora : -1}).limit(1);
 
         const temp = datos[0]?.temperatura.toFixed(1) || "No hay datos";
         mqttClient.publish("respuesta", `Temperatura Actual: ${temp} ºC`);
     }
-    if(msg.includes("actual") && msg.includes("humedad")){
+    //Cuando el mensaje en el mqtt incluya actual o ahora y humedad nos la última humedad guardada
+    if((msg.includes("actual") || msg.includes("ahora")) && msg.includes("humedad")){
         const datos = await Sensor.find({}, {_id : 0, humedad : 1}).sort({hora : -1}).limit(1);
         
         const hum = datos[0]?.humedad?.toFixed(1) ||"No hay datos";
@@ -90,7 +95,7 @@ mqttClient.on("message", async(topic, message)=>{
 
 //conectarnos al server de mongo
 mongoose.connect(process.env.MONGO_URL, {
-    useNewUrlParser: true,
+    useNewUrlParser: true, //Si no existe se cr
     useUnifiedTopology: true
 })
 .then(() => console.log("Conectado a MongoDB Atlas")) //si lo hace pone esto
@@ -101,10 +106,9 @@ const SensorSchema = new mongoose.Schema({
     temperatura : Number,
     humedad : Number,
     hora : {type : Date, default : Date.now}
-});
+}, {versionKey : false});
 //primer valor es el nombre del modelo, su esquema y el tercero donde lo guarda
 const Sensor = mongoose.model('Sensor', SensorSchema, 'ns');
-
 
 app.post('/api/datos', async (req, res) => {
     const {temperatura, humedad} = req.body;
