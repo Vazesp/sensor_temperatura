@@ -76,6 +76,9 @@ mqttClient.on("message", async(topic, message)=>{
         const temp = promedio[0]?.promedio_temperatura?.toFixed(2) || "No hay datos";
         const hum = promedio[0]?.promedio_humedad?.toFixed(2) || "No hay datos";
         mqttClient.publish("respuesta", `Promedio Temperatura: ${temp} ºC \n Promedio Humedad : ${hum} %`);
+
+    if(msg.includes("borrar") && (msg.includes("base de datos")|| msg.includes("database")||msg.includes("BBDD"))){
+        await Sensor.deleteMany({});
     }
     //Cuando el mensaje en el mqtt incluya actual/ahora y temperatura nos da la última temperatura
     if((msg.includes("actual")|| msg.includes("ahora")) && msg.includes("temperatura")){
