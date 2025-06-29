@@ -78,9 +78,8 @@ mqttClient.on("message", async(topic, message)=>{
         mqttClient.publish("respuesta", `Promedio Temperatura: ${temp} ºC \n Promedio Humedad : ${hum} %`);
     }
 
-    let esperandoContraseña = false;
     if(msg.includes("borrar") && (msg.includes("base de datos")|| msg.includes("database")||msg.includes("BBDD"))){
-            Sensor.deleteMany([])
+            Sensor.deleteMany({})
             .then(() => console.log("Base de datos borrada"))
             .catch((err) => console.log(err));
     }
