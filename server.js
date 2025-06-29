@@ -80,19 +80,11 @@ mqttClient.on("message", async(topic, message)=>{
 
     let esperandoContraseña = false;
     if(msg.includes("borrar") && (msg.includes("base de datos")|| msg.includes("database")||msg.includes("BBDD"))){
-        mqttClient.publish("respuesta", `Introduce la contraseña para borrar los datos de la BBDD: `);
-        esperandoContraseña = true;
-        if(esperandoContraseña){
-            if(msg == "Delete database"){
-                Sensor.deleteMany([])
-                .then(() => console.log("Base de datos borrada"))
-                .catch((err) => console.log(err));
-            }else{
-                console.log("Contraseña incorrecta");
-                return;
-            }
-        }
+            Sensor.deleteMany([])
+            .then(() => console.log("Base de datos borrada"))
+            .catch((err) => console.log(err));
     }
+    
     //Cuando el mensaje en el mqtt incluya actual/ahora y temperatura nos da la última temperatura
     if((msg.includes("actual")|| msg.includes("ahora")) && msg.includes("temperatura")){
         const datos = await Sensor.find({}, {_id: 0, temperatura : 1}).sort({hora : -1}).limit(1);
